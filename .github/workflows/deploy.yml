@@ -1,0 +1,66 @@
+# Pubblica FUTURO.IO su GitHub Pages a ogni modifica del branch main.
+# Prima di pubblicare esegue typecheck e test: se falliscono, il sito online non cambia.
+name: Pubblica su GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installa le dipendenze
+        run: npm ci
+
+      - name: Controllo TypeScript
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Calcola il sottopercorso del sito
+        id: base
+        run: |
+          REPO="${{ github.event.repository.name }}"
+          if [[ "$REPO" == *.github.io ]]; then echo "path=" >> "$GITHUB_OUTPUT"; else echo "path=/$REPO" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Build statica
+        run: npm run build
+        env:
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.base.outputs.path }}
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Disattiva Jekyll
+        run: touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

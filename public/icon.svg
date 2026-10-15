@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FUTURO.IO">
+  <rect width="512" height="512" rx="112" fill="#0a1224"/>
+  <rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="#2a3b5f" stroke-width="8"/>
+  <path d="M80 380 C 190 350, 280 260, 410 150" stroke="#60a5fa" stroke-width="36" fill="none" stroke-linecap="round"/>
+  <path d="M80 430 C 210 400, 300 300, 410 150" stroke="#4ade80" stroke-width="36" fill="none" stroke-linecap="round"/>
+  <circle cx="410" cy="150" r="42" fill="#f8fafc"/>
+</svg>
