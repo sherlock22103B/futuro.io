@@ -17,43 +17,48 @@ export function HomePreviewCards() {
       icon: Landmark,
       title: "Pensione pubblica stimata",
       accent: "bg-pension",
-      text: "Quanto potresti ricevere dalla previdenza pubblica, calcolato anno per anno con la logica contributiva.",
+      text: "Calcolata anno per anno, con i tuoi contributi.",
       value: result ? `${formatEuro(result.pensione.risultato?.pensioneMensileLorda)} lordi/mese` : null,
     },
     {
       icon: TrendingUp,
       title: "Capitale ETF ipotetico",
       accent: "bg-etf",
-      text: "Quanto potrebbe valere un piano di accumulo, in tre scenari didattici: prudente, centrale e favorevole.",
-      value: result ? `${formatEuro(result.etf.centrale.risultato?.capitaleFinale)} (centrale)` : null,
+      text: "Facoltativo, in tre scenari: prudente, centrale, favorevole.",
+      value: result ? (result.etfAttivo ? formatEuro(result.etf.centrale.risultato?.capitaleFinale) : "Non simulato") : null,
     },
     {
       icon: Scale,
       title: "Gap previdenziale",
       accent: "bg-incerto",
-      text: "La distanza tra il reddito che desideri e quello stimato. Per capire quanto potrebbe mancare, e cosa cambia se agisci oggi.",
-      value: result ? (result.reddito.gapReale > 0 ? `${formatEuro(result.reddito.gapReale)}/mese in euro di oggi` : "Nessun gap con queste ipotesi") : null,
+      text: "Quanto manca al reddito che desideri.",
+      value: result ? (result.reddito.gapReale > 0 ? `${formatEuro(result.reddito.gapReale)}/mese` : "Nessun gap") : null,
     },
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {cards.map((c) => (
-        <article key={c.title} className="relative overflow-hidden rounded-2xl border border-border bg-card/80 p-6">
-          <div className={`absolute inset-x-0 top-0 h-1 ${c.accent}`} aria-hidden />
-          <c.icon className="h-6 w-6 text-slate-200" aria-hidden />
-          <h3 className="mt-3 text-lg font-semibold">{c.title}</h3>
-          {c.value ? (
-            <p className="mt-2 text-2xl font-bold tabular">{c.value}</p>
-          ) : null}
-          <p className="mt-2 text-sm text-muted-foreground">{c.text}</p>
-          {c.value && (
-            <Link href="/risultati" className="mt-3 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
-              Dalla tua simulazione salvata →
-            </Link>
-          )}
-        </article>
-      ))}
+    <div className="space-y-3">
+      <div className="grid gap-4 sm:grid-cols-3">
+        {cards.map((c) => (
+          <article key={c.title} className="relative overflow-hidden rounded-2xl border border-border bg-card/70 p-5">
+            <div className={`absolute inset-x-0 top-0 h-1 ${c.accent}`} aria-hidden />
+            <div className="flex items-center gap-2">
+              <c.icon className="h-5 w-5 text-slate-300" aria-hidden />
+              <h3 className="font-semibold">{c.title}</h3>
+            </div>
+            {c.value && <p className="mt-3 text-2xl font-bold tabular">{c.value}</p>}
+            <p className="mt-2 text-sm text-muted-foreground">{c.text}</p>
+          </article>
+        ))}
+      </div>
+      {result && (
+        <p className="text-sm text-muted-foreground">
+          Valori della tua ultima simulazione ·{" "}
+          <Link href="/risultati" className="font-medium text-primary underline-offset-4 hover:underline">
+            vedi i risultati
+          </Link>
+        </p>
+      )}
     </div>
   );
 }
